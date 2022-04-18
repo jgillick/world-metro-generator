@@ -60,7 +60,7 @@ createdb world-metros
 To generate metros
 
 ```bash
-npm run generate
+npm run cli -- generate
 ```
 
 ### Export
@@ -70,19 +70,19 @@ Export the data as JSON, JS, or TypeScript:
 **JS**
 
 ```bash
-npm run export metros.js
+npm run cli -- export metros.js
 ```
 
 **JSON**
 
 ```bash
-npm run export metros.json
+npm run cli -- export metros.json
 ```
 
 **TypeScript**
 
 ```bash
-npm run export metros.ts
+npm run cli -- export metros.ts
 ```
 
 ## Limitations
