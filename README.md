@@ -64,10 +64,24 @@ npm run generate
 
 ### Export
 
-To export the data as JSON
+To export the data as JSON, JS, or TypeScript:
+
+**JS**
 
 ```bash
-npm run export
+npm run export metros.js
+```
+
+**JSON**
+
+```bash
+npm run export metros.json
+```
+
+**TypeScript**
+
+```bash
+npm run export metros.ts
 ```
 
 ## Limitations

@@ -25,10 +25,23 @@ async function main() {
         process.exit(0);
       }
     )
-    .command("export", "Export the data to a JSON file", async (argv) => {
-      await exportData("export.json");
-      process.exit(0);
-    })
+    .command(
+      "export [file]",
+      "Export the data to a JSON file",
+      (opts) => {
+        opts.positional("file", {
+          describe:
+            "File to export metro data to (JS, TS, or JSON, by file extension).",
+          type: "string",
+          default: "export.js",
+        });
+      },
+      async (argv) => {
+        const filepath = (argv["file"] || "export.js") as string;
+        await exportData(filepath);
+        process.exit(0);
+      }
+    )
     .help()
     .alias("help", "h").argv;
 }
