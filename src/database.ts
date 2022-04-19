@@ -1,12 +1,12 @@
-import { knex, Knex } from "knex";
-import config from "../config";
+import { knex, Knex } from 'knex';
+import config from '../config';
 
 /**
  * Connect to DB
  */
 export function connect(): Knex<any, unknown[]> {
   return knex({
-    client: "postgresql",
+    client: 'postgresql',
     connection: config.postgres.connect,
   });
 }
@@ -21,9 +21,9 @@ export async function createTable(overwriteData: boolean) {
   // Check if the table exists
   if (!overwriteData) {
     const existing = await db
-      .select("*")
-      .from("pg_catalog.pg_tables")
-      .where("tablename", config.postgres.metroTable);
+      .select('*')
+      .from('pg_catalog.pg_tables')
+      .where('tablename', config.postgres.metroTable);
     if (existing.length) {
       throw new Error(
         `The postgres table ${config.postgres.connect.database}.${config.postgres.metroTable} already exists! Use the --overwrite-data option to overwrite this table.`

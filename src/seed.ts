@@ -1,17 +1,17 @@
-import http from "http";
-import fs from "fs";
-import path from "path";
-import readline from "readline";
-import StreamZip from "node-stream-zip";
-import { connect, createTable } from "./database";
-import provinceData from "./data/provinces";
-import type { CityData } from "./types";
+import http from 'http';
+import fs from 'fs';
+import path from 'path';
+import readline from 'readline';
+import StreamZip from 'node-stream-zip';
+import { connect, createTable } from './database';
+import provinceData from './data/provinces';
+import type { CityData } from './types';
 
-import config from "../config";
+import config from '../config';
 
-const TMP_DIR = path.join(__dirname, "../temp");
+const TMP_DIR = path.join(__dirname, '../temp');
 const ADMIN_AREAS_URL =
-  "http://download.geonames.org/export/dump/admin1CodesASCII.txt";
+  'http://download.geonames.org/export/dump/admin1CodesASCII.txt';
 
 /**
  * Simple wrapper that downloads a URL to a file
@@ -23,12 +23,12 @@ function downloadFile(source: string, destination: string): Promise<void> {
     const request = http.get(source, (response) => {
       response.pipe(file);
 
-      file.on("finish", () => {
+      file.on('finish', () => {
         file.close();
         resolve();
       });
     });
-    request.on("error", reject);
+    request.on('error', reject);
   });
 }
 
@@ -36,12 +36,12 @@ function downloadFile(source: string, destination: string): Promise<void> {
  * Download and extract the city list
  */
 async function downloadCities() {
-  const zipfile = path.join(TMP_DIR, "cities.zip");
+  const zipfile = path.join(TMP_DIR, 'cities.zip');
   await downloadFile(config.seed, zipfile);
 
   // Extract
-  console.log("Extracting city data");
-  const txtfile = path.join(TMP_DIR, "cities.txt");
+  console.log('Extracting city data');
+  const txtfile = path.join(TMP_DIR, 'cities.txt');
   const zip = new StreamZip.async({ file: zipfile });
   const entries = await zip.entries();
   const cityEntry = Object.values(entries)[0];
@@ -52,7 +52,7 @@ async function downloadCities() {
  * Download the administrative areas
  */
 async function downloadAdminAreas() {
-  const filepath = path.join(TMP_DIR, "admin1CodesASCII.txt");
+  const filepath = path.join(TMP_DIR, 'admin1CodesASCII.txt');
   await downloadFile(ADMIN_AREAS_URL, filepath);
 }
 
@@ -61,7 +61,7 @@ async function downloadAdminAreas() {
  */
 async function getRegionMap() {
   const fileStream = fs.createReadStream(
-    path.join(TMP_DIR, "admin1CodesASCII.txt")
+    path.join(TMP_DIR, 'admin1CodesASCII.txt')
   );
   const lineStream = readline.createInterface({
     input: fileStream,
@@ -70,8 +70,8 @@ async function getRegionMap() {
 
   const regionMap = new Map<string, string>();
   for await (const line of lineStream) {
-    const [code, _name, nameAscii, _geonameid] = line.split("\t");
-    const [country] = code.split(".");
+    const [code, _name, nameAscii, _geonameid] = line.split('\t');
+    const [country] = code.split('.');
 
     // Find province abbreviation data
     const data = provinceData.find((province) => {
@@ -93,7 +93,7 @@ async function* readCities() {
   const regions = await getRegionMap();
 
   // Load file
-  const filepath = path.join(TMP_DIR, "cities.txt");
+  const filepath = path.join(TMP_DIR, 'cities.txt');
   const fileStream = fs.createReadStream(filepath);
   const lineStream = readline.createInterface({
     input: fileStream,
@@ -120,22 +120,22 @@ async function* readCities() {
       _elevation,
       _dem,
       _timezone,
-    ] = line.split("\t");
-    const isCapital = ["PPLC", "PPLCH", "PPLA"].includes(featureCode);
+    ] = line.split('\t');
+    const isCapital = ['PPLC', 'PPLCH', 'PPLA'].includes(featureCode);
 
     // Filter out locations that are not "places"
-    if (featureClass !== "P") {
+    if (featureClass !== 'P') {
       yield null;
     }
 
     // Get region
     let region;
-    if (countryCode === "US") {
+    if (countryCode === 'US') {
       region = admin1;
-    } else if (admin2.trim() !== "") {
+    } else if (admin2.trim() !== '') {
       region = regions.get(`${countryCode}.${admin2}`) || null;
     }
-    if (!region && admin1.trim() !== "") {
+    if (!region && admin1.trim() !== '') {
       region = regions.get(`${countryCode}.${admin1}`) || null;
     }
 
@@ -149,7 +149,7 @@ async function* readCities() {
       capital: isCapital,
       country: countryCode,
       feature_code: featureCode,
-      region: region && region.trim() !== "" ? region : null,
+      region: region && region.trim() !== '' ? region : null,
     };
     yield city;
   }
@@ -159,7 +159,7 @@ async function* readCities() {
  * Import data into the city table
  */
 export async function importCityData() {
-  console.log("Importing city data");
+  console.log('Importing city data');
   const conn = connect();
   const cities = await readCities();
 
@@ -183,7 +183,7 @@ export async function importCityData() {
       }
 
       if (errors > 20) {
-        console.error("\nToo many errors, exiting!");
+        console.error('\nToo many errors, exiting!');
         process.exit(1);
       }
     }
@@ -195,7 +195,7 @@ export async function importCityData() {
 }
 
 export async function seed(overwriteData: boolean) {
-  console.log("GET CITY DATA");
+  console.log('GET CITY DATA');
 
   // Setup DB table
   await createTable(overwriteData);

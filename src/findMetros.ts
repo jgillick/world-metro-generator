@@ -2,12 +2,12 @@
  * Filters the DB table to cities into metros that are a minimum distance from each other.
  */
 
-import { Knex } from "knex";
-import readline from "readline";
-import { connect } from "./database";
-import type { CityData } from "./types";
+import { Knex } from 'knex';
+import readline from 'readline';
+import { connect } from './database';
+import type { CityData } from './types';
 
-import config from "../config";
+import config from '../config';
 
 /**
  * Set the forced metros
@@ -18,7 +18,7 @@ async function setForcedMetros(db: Knex): Promise<number> {
   // Fetch metros
   const find = config.forcedMetros.map(async (search) => {
     const metro = await db(tablename)
-      .select<CityData>("*")
+      .select<CityData>('*')
       .where({
         name: search.city,
         region: search.region,
@@ -29,7 +29,7 @@ async function setForcedMetros(db: Knex): Promise<number> {
     if (!metro) {
       const name = [search.city, search.region, search.country]
         .filter((i) => !!i)
-        .join(", ");
+        .join(', ');
       console.warn(`WARNING: Could not find the forced metro: ${name}`);
     }
     return metro;
@@ -62,7 +62,7 @@ function setMetro(db, metro: CityData) {
   process.stdout.write(`Found metro: ${metro.name}`);
 
   const tablename = config.postgres.metroTable;
-  return db(tablename).update({ metro: true }).where("id", metro.id);
+  return db(tablename).update({ metro: true }).where('id', metro.id);
 }
 
 /**
@@ -79,8 +79,8 @@ function clearMetro(db, metro: CityData) {
        @> ll_to_earth(latitude, longitude)
      `
     )
-    .whereNot("id", metro.id)
-    .where("metro", false)
+    .whereNot('id', metro.id)
+    .where('metro', false)
     .delete();
 }
 
@@ -90,9 +90,9 @@ function clearMetro(db, metro: CityData) {
 async function findNextMetro(db: Knex): Promise<CityData | null> {
   const tablename = config.postgres.metroTable;
   const metro = await db(tablename)
-    .select<CityData>("*")
-    .where("metro", false)
-    .orderBy("population", "DESC")
+    .select<CityData>('*')
+    .where('metro', false)
+    .orderBy('population', 'DESC')
     .limit(1)
     .first();
   if (!metro) {
@@ -106,7 +106,7 @@ async function findNextMetro(db: Knex): Promise<CityData | null> {
  * Main program entrypoint
  */
 export async function findMetros(): Promise<void> {
-  console.log("\nFIND METROS");
+  console.log('\nFIND METROS');
 
   const db = await connect();
 

@@ -1,5 +1,5 @@
-import { seed } from "./seed";
-import { findMetros } from "./findMetros";
+import { seed } from './seed';
+import { findMetros } from './findMetros';
 
 export async function generate(overwriteData: boolean) {
   try {

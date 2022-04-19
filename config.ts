@@ -35,23 +35,29 @@ export default {
      * How to connect to your database
      */
     connect: {
-      host: "localhost",
+      host: 'localhost',
       port: 5432,
-      user: "admin",
-      password: "",
-      database: "world-metros",
+      user: 'admin',
+      password: '',
+      database: 'world-metros',
     },
 
     /**
      * The Postgres table to create with metros
      */
-    metroTable: "metros",
+    metroTable: 'metros',
   },
+
+  /**
+   * The data that should be exported
+   * Possible fields are: 'city', 'region', 'country', 'latitude', 'longitude', 'population'
+   */
+  export: ['city', 'region', 'country', 'latitude', 'longitude', 'population'],
 
   /**
    * The URL to the city list file to seed the data with.
    * This will affect the minimum population size. For example, by default we use the `cities15000` file, which is only cities of the world with populations >= 15,000.
    * If you use a larger dataset, the script will take longer and use way more memory.
    */
-  seed: "http://download.geonames.org/export/dump/cities15000.zip",
+  seed: 'http://download.geonames.org/export/dump/cities15000.zip',
 };
